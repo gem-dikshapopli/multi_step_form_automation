@@ -1,19 +1,25 @@
 package utils;
 
-import atu.testrecorder.ATUTestRecorder;
-import atu.testrecorder.exceptions.ATUTestRecorderException;
+import org.monte.media.Format;
+import org.monte.media.FormatKeys;
+import org.monte.media.math.Rational;
+import org.monte.screenrecorder.ScreenRecorder;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.io.FileHandler;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import static org.monte.media.FormatKeys.*;
+import static org.monte.media.VideoFormatKeys.*;
+
 public class CaptureScreenShotAndScreenRecording {
     static int i=1;
     static String folderPath="src/ScreenShotsAndRecording/";
-    static ATUTestRecorder atuTestRecorder;
     static String timeStamp;
+    public static ScreenRecorder screenRecorder;
     public static void captureScreenShot(WebElement element)throws IOException{
         /**
          *This will take the screenshot of the particular element
@@ -30,15 +36,28 @@ public class CaptureScreenShotAndScreenRecording {
         }
     }
 
-    public static void startRecording() throws ATUTestRecorderException {
-        atuTestRecorder=new ATUTestRecorder(folderPath+"Recording",false);
-        atuTestRecorder.start();
+
+
+    public static void recordingStart() throws IOException, AWTException {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = screenSize.width;
+        int height = screenSize.height;
+        File file=new File(folderPath+"Recording");
+        Rectangle captureSize = new Rectangle(0, 0, width, height);
+        GraphicsConfiguration gc=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        screenRecorder =new ScreenRecorder(gc,captureSize,new Format(MediaTypeKey, FormatKeys.MediaType.FILE, MimeTypeKey, MIME_AVI),
+                new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
+                        CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
+                        Rational.valueOf(15), QualityKey, 1.0f, KeyFrameIntervalKey, 15 * 60),
+                new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
+                null, file);
+
+        screenRecorder.start();
     }
 
-    public static void stopRecording() throws ATUTestRecorderException {
-        atuTestRecorder.stop();
+    public static void recordingStop() throws Exception {
+        screenRecorder.stop();
     }
-
     private static void createDirectoryIfNeeded() {
         File directory = new File(folderPath);
         if (!directory.exists()) {

@@ -41,7 +41,7 @@ public class GetFakeData {
     }
     public static String generatePhoneNumber(){
         Faker faker = new Faker();
-        return (String.valueOf(faker.phoneNumber()));
+        return (String.valueOf(faker.number().digits(10)));
     }
     public static int generateRandomNumber(){
         Faker faker=new Faker();

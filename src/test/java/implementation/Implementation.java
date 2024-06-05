@@ -1,55 +1,30 @@
 package implementation;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import utils.CaptureScreenShotAndScreenRecording;
 import utils.ExplicitWait;
 import utils.GetFakeData;
 import utils.ObjectPaths;
+import java.io.IOException;
+import java.util.Map;
 import static stepDefinition.Hook.driver;
 public class Implementation {
-
     public static void switchToIframe(){
-        driver.switchTo().frame(driver.findElement(By.id(ObjectPaths.IFRAME.getPaths())));
+        driver.switchTo().frame(driver.findElement(ObjectPaths.iframe));
     }
     public static void validateUserOpensTheForm() {
         try{
             switchToIframe();
-            ExplicitWait.elementIsClickable(By.xpath(ObjectPaths.REGISTER.getPaths()));
-            if(driver.findElement(By.xpath(ObjectPaths.REGISTER.getPaths())).isDisplayed()){
+            ExplicitWait.elementIsClickable(ObjectPaths.register);
+            if(driver.findElement(ObjectPaths.register).isDisplayed()){
                 logger.Loggers.info("Form opens successfully");
             }
         }catch (Exception e){
             logger.Loggers.warn("Exception "+e);
         }
     }
-
-    public static void userFillsFirstName() {
+    public static void userClicksOnNextButton() {
         try{
-            String firstName = GetFakeData.generateFakeFirstName();
-            WebElement firstNameField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","First name...")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(firstNameField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","First name..."))).sendKeys(firstName);
-            logger.Loggers.info("user Fills the first name as = "+firstName);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
-
-    public static void userFillsLastname() {
-        try{
-            String lastname=GetFakeData.generateFakeLastName();
-            WebElement lastNameField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Last name...")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(lastNameField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Last name..."))).sendKeys(lastname);
-            logger.Loggers.info("user Fills the last name as = "+lastname);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
-
-    public static void userClicksOnNextButton(String buttonName) {
-        try{
-            WebElement clickOnButton=driver.findElement(By.id(ObjectPaths.NEXT_BUTTON.getPaths().replace("@text",buttonName)));
+            WebElement clickOnButton=driver.findElement(ObjectPaths.nextButton);
             CaptureScreenShotAndScreenRecording.captureScreenShot(clickOnButton);
             clickOnButton.click();
         }catch (Exception e){
@@ -57,87 +32,82 @@ public class Implementation {
         }
     }
 
-    public static void userFillsEmail() {
-        try{
-            String email=GetFakeData.generateEmail();
-            WebElement emailField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","E-mail...")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(emailField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","E-mail..."))).sendKeys(email);
-            logger.Loggers.info("user Fills the email as = "+email);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
+    public static void userFillsInTheField(Map<String,String> dataTable) throws IOException {
+        WebElement fieldName;
+        for(String key: dataTable.keySet()){
+            switch (key) {
+                case "firstName" -> {
+                    String firstName = GetFakeData.generateFakeFirstName();
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(firstName);
+                    logger.Loggers.info("user Fills the first name as = " + firstName);
+                }
+                case "lastName" -> {
+                    String lastname = GetFakeData.generateFakeLastName();
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(lastname);
+                    logger.Loggers.info("user Fills the last name as = " + lastname);
+                    userClicksOnNextButton();
+                }
+                case "email" -> {
+                    String email = GetFakeData.generateEmail();
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(email);
+                    logger.Loggers.info("user Fills the email as = " + email);
+                }
+                case "phoneNumber" -> {
+                    String phoneNumber = GetFakeData.generatePhoneNumber();
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(phoneNumber);
+                    logger.Loggers.info("user Fills the phone number as = " + phoneNumber);
+                    userClicksOnNextButton();
+                }
+                case "birthDate" -> {
+                    String birthdayDate = String.valueOf(GetFakeData.generateRandomNumber());
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(birthdayDate);
+                    logger.Loggers.info("user Fills the birth date as = " + birthdayDate);
+                }
+                case "birthMonth" -> {
+                    String birthdayMonth = String.valueOf(GetFakeData.generateRandomMonth());
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(birthdayMonth);
+                    logger.Loggers.info("user Fills the birth month as = " + birthdayMonth);
+                }
+                case "birthYear" -> {
+                    String birthdayYear = String.valueOf(GetFakeData.generateRandomYear());
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(birthdayYear);
+                    logger.Loggers.info("user Fills the birth year as = " + birthdayYear);
+                    userClicksOnNextButton();
+                }
+                case "username" -> {
+                    String username = GetFakeData.generateUsername();
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(username);
+                    logger.Loggers.info("user Fills the username as = " + username);
+                }
+                case "password" -> {
+                    String password = GetFakeData.generatePassword();
+                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(password);
+                    logger.Loggers.info("user Fills the password as = " + password);
+                    userClicksOnNextButton();
+                }
+                default -> throw new RuntimeException("invalid key" + key);
+            }
 
-    public static void userFillsPhoneNumber() {
-        try{
-            String phoneNumber=GetFakeData.generatePhoneNumber();
-            WebElement phoneNumberField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Phone...")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(phoneNumberField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Phone..."))).sendKeys(phoneNumber);
-            logger.Loggers.info("user Fills the phone number as = "+phoneNumber);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
         }
-    }
 
-    public static void userFillsBirthdayDate() {
-        try{
-            String birthdayDate=String.valueOf(GetFakeData.generateRandomNumber());
-            WebElement birthDateField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","dd")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(birthDateField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","dd"))).sendKeys(birthdayDate);
-            logger.Loggers.info("user Fills the phone number as = "+birthdayDate);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
 
-    public static void userFillsBirthdayMonth() {
-        try{
-            String birthdayMonth=String.valueOf(GetFakeData.generateRandomMonth());
-            WebElement birthMonthField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","mm")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(birthMonthField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","mm"))).sendKeys(birthdayMonth);
-            logger.Loggers.info("user Fills the phone number as = "+birthdayMonth);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
-
-    public static void userFillsBirthdayYear() {
-        try{
-            String birthdayYear=String.valueOf(GetFakeData.generateRandomYear());
-            WebElement birthYearField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","yyyy")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(birthYearField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","yyyy"))).sendKeys(birthdayYear);
-            logger.Loggers.info("user Fills the phone number as = "+birthdayYear);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
-
-    public static void userFillsUsernameField() {
-        try{
-            String username=GetFakeData.generateUsername();
-            WebElement userNameField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Username...")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(userNameField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Username..."))).sendKeys(username);
-            logger.Loggers.info("user Fills the last name as = "+username);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
-    }
-
-    public static void userFillsPassword() {
-        try{
-            String password=GetFakeData.generatePassword();
-            WebElement passwordField=driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Password...")));
-            CaptureScreenShotAndScreenRecording.captureScreenShot(passwordField);
-            driver.findElement(By.xpath(ObjectPaths.NAME_OF_THE_FIELD.getPaths().replace("@text","Password..."))).sendKeys(password);
-            logger.Loggers.info("user Fills the last name as = "+password);
-        }catch (Exception e){
-            logger.Loggers.warn("Exception "+e);
-        }
     }
 }
