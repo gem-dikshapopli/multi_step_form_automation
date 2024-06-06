@@ -13,24 +13,25 @@ import java.io.IOException;
 import java.time.Duration;
 
 public class Hook {
-        public static WebDriver driver=new ChromeDriver();
+    public static WebDriver driver = new ChromeDriver();
 
-        @Before
-        public static void setUpTheDriver() throws IOException, AWTException {
-           System.setProperty("webdriver.chrome.driver","src/test/resources/chromedriver.exe");
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-            driver.manage().window().maximize();
-            driver.get(utils.ObjectPaths.openUrl);
-            CaptureScreenShotAndScreenRecording.recordingStart();
-        }
+    @Before
+    public static void setUpTheDriver() throws IOException, AWTException {
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().window().maximize();
+        driver.get(utils.ObjectPaths.openUrl);
+        CaptureScreenShotAndScreenRecording.recordingStart();
+    }
 
-        @After
-        public void tearDown() throws Exception {
-            CaptureScreenShotAndScreenRecording.recordingStop();
-            driver.quit();
+    @After
+    public void tearDown() throws Exception {
+        CaptureScreenShotAndScreenRecording.recordingStop();
+        driver.quit();
 
-        }
-        public static WebDriver getDriver(){
-            return driver;
-        }
+    }
+
+    public static WebDriver getDriver() {
+        return driver;
+    }
 }

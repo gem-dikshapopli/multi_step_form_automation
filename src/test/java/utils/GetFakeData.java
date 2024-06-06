@@ -1,14 +1,17 @@
 package utils;
+
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 public class GetFakeData {
-    public static String generateFakeData(String fakeData){
-        Faker faker=new Faker();
-        String data="";
+    public static String generateFakeData(String fakeData) {
+        Faker faker = new Faker();
+        String data = "";
         switch (fakeData) {
             case "firstName" -> data = faker.name().firstName().toLowerCase();
             case "lastName" -> data = faker.name().lastName().toLowerCase();

@@ -15,6 +15,7 @@ public class StepDefinition {
     public static void userOpensMultiStepForm() {
         implementation.Implementation.validateUserOpensTheForm();
     }
+
     @When("user fills in the field")
     public void userFillsInTheField(DataTable dataTable) throws IOException {
         Map<String, String> dataElements;

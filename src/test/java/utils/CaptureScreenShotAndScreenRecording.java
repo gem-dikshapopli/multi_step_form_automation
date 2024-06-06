@@ -7,27 +7,30 @@ import org.monte.screenrecorder.ScreenRecorder;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.io.FileHandler;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import static org.monte.media.FormatKeys.*;
 import static org.monte.media.VideoFormatKeys.*;
 
 public class CaptureScreenShotAndScreenRecording {
-    static int i=1;
-    static String folderPath="src/ScreenShotsAndRecording/";
+    static int i = 1;
+    static String folderPath = "src/ScreenShotsAndRecording/";
     static String timeStamp;
     public static ScreenRecorder screenRecorder;
-    public static void captureScreenShot(WebElement element)throws IOException{
+
+    public static void captureScreenShot(WebElement element) throws IOException {
         /**
          *This will take the screenshot of the particular element
          */
         createDirectoryIfNeeded();
-        File screenshot= element.getScreenshotAs(OutputType.FILE);
-         timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        File destinationFile=new File(folderPath+"File "+"_ "+(i++)+".png");
+        File screenshot = element.getScreenshotAs(OutputType.FILE);
+        timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        File destinationFile = new File(folderPath + "File " + "_ " + (i++) + ".png");
         // Save the screenshot
         try {
             FileHandler.copy(screenshot, destinationFile);
@@ -37,15 +40,14 @@ public class CaptureScreenShotAndScreenRecording {
     }
 
 
-
     public static void recordingStart() throws IOException, AWTException {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = screenSize.width;
         int height = screenSize.height;
-        File file=new File(folderPath+"Recording");
+        File file = new File(folderPath + "Recording");
         Rectangle captureSize = new Rectangle(0, 0, width, height);
-        GraphicsConfiguration gc=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        screenRecorder =new ScreenRecorder(gc,captureSize,new Format(MediaTypeKey, FormatKeys.MediaType.FILE, MimeTypeKey, MIME_AVI),
+        GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        screenRecorder = new ScreenRecorder(gc, captureSize, new Format(MediaTypeKey, FormatKeys.MediaType.FILE, MimeTypeKey, MIME_AVI),
                 new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
                         CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
                         Rational.valueOf(15), QualityKey, 1.0f, KeyFrameIntervalKey, 15 * 60),
@@ -58,6 +60,7 @@ public class CaptureScreenShotAndScreenRecording {
     public static void recordingStop() throws Exception {
         screenRecorder.stop();
     }
+
     private static void createDirectoryIfNeeded() {
         File directory = new File(folderPath);
         if (!directory.exists()) {
