@@ -39,7 +39,6 @@ public class CaptureScreenShotAndScreenRecording {
         }
     }
 
-
     public static void recordingStart() throws IOException, AWTException {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = screenSize.width;
@@ -47,9 +46,10 @@ public class CaptureScreenShotAndScreenRecording {
         File file = new File(folderPath + "Recording");
         Rectangle captureSize = new Rectangle(0, 0, width, height);
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        screenRecorder = new ScreenRecorder(gc, captureSize, new Format(MediaTypeKey, FormatKeys.MediaType.FILE, MimeTypeKey, MIME_AVI),
-                new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
-                        CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
+
+        screenRecorder = new ScreenRecorder(gc, captureSize, new Format(MediaTypeKey, FormatKeys.MediaType.FILE, MimeTypeKey, MIME_QUICKTIME),
+                new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_QUICKTIME_ANIMATION,
+                        CompressorNameKey, COMPRESSOR_NAME_QUICKTIME_ANIMATION, DepthKey, 24, FrameRateKey,
                         Rational.valueOf(15), QualityKey, 1.0f, KeyFrameIntervalKey, 15 * 60),
                 new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
                 null, file);
@@ -59,6 +59,21 @@ public class CaptureScreenShotAndScreenRecording {
 
     public static void recordingStop() throws Exception {
         screenRecorder.stop();
+        renameRecordingFile();
+    }
+
+    private static void renameRecordingFile() {
+        File directory = new File(folderPath + "Recording");
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".mov"));
+        if (files != null && files.length == 1) {
+            File originalFile = files[0];
+            File renamedFile = new File(folderPath + "Recording/ScreenRecording.mp4");
+            if (originalFile.renameTo(renamedFile)) {
+                System.out.println("File renamed successfully");
+            } else {
+                System.out.println("File rename failed");
+            }
+        }
     }
 
     private static void createDirectoryIfNeeded() {
