@@ -20,6 +20,8 @@ public class Implementation {
             }
         }catch (Exception e){
             logger.Loggers.warn("Exception "+e);
+//            logger.Loggers.warn("Exception "+e.getMessage());
+
         }
     }
     public static void userClicksOnNextButton() {
@@ -32,75 +34,24 @@ public class Implementation {
         }
     }
 
-    public static void userFillsInTheField(Map<String,String> dataTable) throws IOException {
+    public static void userFillsTheData(Map<String,String> dataTable,String key) throws IOException {
         WebElement fieldName;
+        String nameOfTheField = GetFakeData.generateFakeData(key);
+        fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
+        CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
+        driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(nameOfTheField);
+        logger.Loggers.info("user Fills the "+ key+" = " + nameOfTheField);
+    }
+
+    public static void userFillsInTheField(Map<String,String> dataTable) throws IOException {
+
         for(String key: dataTable.keySet()){
             switch (key) {
-                case "firstName" -> {
-                    String firstName = GetFakeData.generateFakeFirstName();
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(firstName);
-                    logger.Loggers.info("user Fills the first name as = " + firstName);
+                case "firstName","email","birthDate","birthMonth","username" -> {
+                    userFillsTheData(dataTable,key);
                 }
-                case "lastName" -> {
-                    String lastname = GetFakeData.generateFakeLastName();
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(lastname);
-                    logger.Loggers.info("user Fills the last name as = " + lastname);
-                    userClicksOnNextButton();
-                }
-                case "email" -> {
-                    String email = GetFakeData.generateEmail();
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(email);
-                    logger.Loggers.info("user Fills the email as = " + email);
-                }
-                case "phoneNumber" -> {
-                    String phoneNumber = GetFakeData.generatePhoneNumber();
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(phoneNumber);
-                    logger.Loggers.info("user Fills the phone number as = " + phoneNumber);
-                    userClicksOnNextButton();
-                }
-                case "birthDate" -> {
-                    String birthdayDate = String.valueOf(GetFakeData.generateRandomNumber());
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(birthdayDate);
-                    logger.Loggers.info("user Fills the birth date as = " + birthdayDate);
-                }
-                case "birthMonth" -> {
-                    String birthdayMonth = String.valueOf(GetFakeData.generateRandomMonth());
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(birthdayMonth);
-                    logger.Loggers.info("user Fills the birth month as = " + birthdayMonth);
-                }
-                case "birthYear" -> {
-                    String birthdayYear = String.valueOf(GetFakeData.generateRandomYear());
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(birthdayYear);
-                    logger.Loggers.info("user Fills the birth year as = " + birthdayYear);
-                    userClicksOnNextButton();
-                }
-                case "username" -> {
-                    String username = GetFakeData.generateUsername();
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(username);
-                    logger.Loggers.info("user Fills the username as = " + username);
-                }
-                case "password" -> {
-                    String password = GetFakeData.generatePassword();
-                    fieldName=driver.findElement(ObjectPaths.fieldName(dataTable.get(key)));
-                    CaptureScreenShotAndScreenRecording.captureScreenShot(fieldName);
-                    driver.findElement(ObjectPaths.fieldName(dataTable.get(key))).sendKeys(password);
-                    logger.Loggers.info("user Fills the password as = " + password);
+                case "lastName","phoneNumber","birthYear","password"->{
+                    userFillsTheData(dataTable,key);
                     userClicksOnNextButton();
                 }
                 default -> throw new RuntimeException("invalid key" + key);
