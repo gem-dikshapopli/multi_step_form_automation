@@ -5,15 +5,16 @@ import org.monte.media.FormatKeys;
 import org.monte.media.math.Rational;
 import org.monte.screenrecorder.ScreenRecorder;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.io.FileHandler;
-
+import stepDefinition.Hook;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import static org.monte.media.FormatKeys.*;
 import static org.monte.media.VideoFormatKeys.*;
 
@@ -38,13 +39,10 @@ public class CaptureScreenShotAndScreenRecording {
             e.printStackTrace();
         }
     }
-
-    public static void recordingStart() throws IOException, AWTException {
+    public static void recordingStart(int x, int y, int width, int height) throws IOException, AWTException {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = screenSize.width;
-        int height = screenSize.height;
         File file = new File(folderPath + "Recording");
-        Rectangle captureSize = new Rectangle(0, 0, width, height);
+        Rectangle captureSize = new Rectangle(x, y, width, height);
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
         screenRecorder = new ScreenRecorder(gc, captureSize, new Format(MediaTypeKey, FormatKeys.MediaType.FILE, MimeTypeKey, MIME_QUICKTIME),
@@ -55,6 +53,19 @@ public class CaptureScreenShotAndScreenRecording {
                 null, file);
 
         screenRecorder.start();
+    }
+
+    public static void captureElement() throws IOException, AWTException {
+        WebElement element= Hook.driver.findElement(ObjectPaths.captureRecording);
+        org.openqa.selenium.Point point = element.getLocation();
+        org.openqa.selenium.Dimension size = element.getSize();
+
+        int x = point.getX();
+        int y = point.getY();
+        int width = size.getWidth();
+        int height = size.getHeight();
+
+        recordingStart(x, y, width, height);
     }
 
     public static void recordingStop() throws Exception {
@@ -73,6 +84,22 @@ public class CaptureScreenShotAndScreenRecording {
             } else {
                 System.out.println("File rename failed");
             }
+        }
+    }
+
+    public static void captureFullPageScreenshot(WebDriver driver) throws IOException {
+        /**
+         * This will take the screenshot of the full page
+         */
+        createDirectoryIfNeeded();
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        File destinationFile = new File(folderPath + "FullPage_" + timeStamp + ".png");
+        // Save the screenshot
+        try {
+            FileHandler.copy(screenshot, destinationFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

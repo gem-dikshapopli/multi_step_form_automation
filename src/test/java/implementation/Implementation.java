@@ -5,10 +5,8 @@ import utils.CaptureScreenShotAndScreenRecording;
 import utils.ExplicitWait;
 import utils.GetFakeData;
 import utils.ObjectPaths;
-
 import java.io.IOException;
 import java.util.Map;
-
 import static stepDefinition.Hook.driver;
 
 public class Implementation {

@@ -21,7 +21,7 @@ public class Hook {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.manage().window().maximize();
         driver.get(utils.ObjectPaths.openUrl);
-        CaptureScreenShotAndScreenRecording.recordingStart();
+        CaptureScreenShotAndScreenRecording.captureElement();
     }
 
     @After
